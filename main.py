@@ -4,10 +4,12 @@ import requests
 import bs4
 import urllib
 import sys
+from math import ceil
 from tqdm import tqdm
 from unicodedata import normalize
 
 # %%
+books_per_page = 10
 url_categories = 'https://link.springer.com/search/facetexpanded/discipline?facet-content-type=%22Book%22&package=mat-covid19_textbooks'
 urlbase = 'https://link.springer.com/'
 if len(sys.argv)==1:
@@ -35,7 +37,7 @@ def downloadCategory(category,urlbase,destination):
     number_of_books = int(content.select_one('#number-of-search-results-and-search-terms').select_one('strong').text)
     if number_of_books>0:
         print(f'Downloading {number_of_books} book for {category}')
-        number_of_pages = int(content.select_one('.number-of-pages').text)
+        number_of_pages = ceil(number_of_books/books_per_page)#int(content.select_one('.number-of-pages').text)
         book_list=[]
         with tqdm(total=number_of_books) as pbar:
             for n in range(1,number_of_pages+1):
